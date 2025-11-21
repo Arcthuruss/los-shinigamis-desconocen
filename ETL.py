@@ -89,7 +89,7 @@ def traiter_ligne(row, csv_file_path):
 # Fonction exécutée en parallèle
 def traiter_csv(csv_file_path):
     try:
-        print(f"[PID {os.getpid()}] → Import de {os.path.basename(csv_file_path)}")
+        print(f"[PID {os.getpid()}] -> Import de {os.path.basename(csv_file_path)}")
 
         conn = psycopg2.connect(
             dbname="shinigami_db",
@@ -134,10 +134,10 @@ def traiter_csv(csv_file_path):
         cursor.close()
         conn.close()
 
-        print(f"[PID {os.getpid()}] Import terminé : {os.path.basename(csv_file_path)}")
+        print(f"[PID {os.getpid()}] -> Import terminé : {os.path.basename(csv_file_path)}")
 
     except Exception as e:
-        print(f"[ERREUR] fichier {csv_file_path} → {e}")
+        print(f"[ERREUR] fichier {csv_file_path} -> {e}")
 
 
 # Multiprocessing
@@ -159,6 +159,8 @@ def main():
         
     # Supprime tout les doublons dans la table après l'import
     try:
+        print("Suppression des doublons en cours...")
+        
         conn = psycopg2.connect(
             dbname="shinigami_db",
             user="shinigami",
