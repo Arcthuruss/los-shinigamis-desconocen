@@ -174,7 +174,13 @@ def main():
             AND a.nom = b.nom
             AND a.prenom = b.prenom
             AND a.date_naissance = b.date_naissance
-            AND a.date_deces = b.date_deces;
+            AND a.date_deces = b.date_deces
+            AND a.lieu_deces = b.lieu_deces
+            AND a.acte_deces = b.acte_deces
+            AND a.sexe = b.sexe
+            AND a.lieu_naissance = b.lieu_naissance
+            AND a.commune_naissance = b.commune_naissance
+            AND a.pays_naissance = b.pays_naissance;
         """)
         conn.commit()
         cursor.close()
