@@ -156,6 +156,32 @@ def main():
 
     with Pool(processes=nb_workers) as pool:
         pool.map(traiter_csv, fichiers)
+        
+    # Supprime tout les doublons dans la table après l'import
+    try:
+        conn = psycopg2.connect(
+            dbname="shinigami_db",
+            user="shinigami",
+            password="shinigami_password",
+            host="localhost",
+            port="5432"
+        )
+        cursor = conn.cursor()
+        cursor.execute("""
+            DELETE FROM le_deces.deces a
+            USING le_deces.deces b
+            WHERE a.ctid < b.ctid
+            AND a.nom = b.nom
+            AND a.prenom = b.prenom
+            AND a.date_naissance = b.date_naissance
+            AND a.date_deces = b.date_deces;
+        """)
+        conn.commit()
+        cursor.close()
+        conn.close()
+        print("Suppression des doublons terminée.")
+    except Exception as e:
+        print(f"[ERREUR] lors de la suppression des doublons → {e}")
 
 
 if __name__ == "__main__":
