@@ -188,6 +188,28 @@ def main():
         cursor.close()
         conn.close()
         print("Suppression des doublons terminée.")
+        
+        print("Suppresion des données impossibles...")
+        conn = psycopg2.connect(
+            dbname="shinigami_db",
+            user="shinigami",
+            password="shinigami_password",
+            host="localhost",
+            port="5432"
+        )
+        cursor = conn.cursor()
+        
+        # On supprime les données avec des dates impossibles et qui ont u age_deces supérieur à 120 ans
+        cursor.execute("""
+            DELETE FROM le_deces.deces
+            WHERE date_naissance < '1800-01-01'
+            AND age_deces > 120;
+        """)
+        conn.commit()
+        cursor.close()
+        conn.close()
+        print("Suppresion terminée.")
+        
     except Exception as e:
         print(f"[ERREUR] lors de la suppression des doublons → {e}")
 
