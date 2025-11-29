@@ -99,6 +99,18 @@ def get_deces():
     if "prenom" in params:
         conditions.append("LOWER(prenom) LIKE %(prenom)s")
         params_sql["prenom"] = f"%{params['prenom'].lower()}%"
+    
+    if "annee_deces" in params:
+        conditions.append("EXTRACT(YEAR FROM date_deces) = %(annee_deces)s")
+        params_sql["annee_deces"] = int(params["annee_deces"])
+    
+    if "mois_deces" in params:
+        conditions.append("EXTRACT(MONTH FROM date_deces) = %(mois_deces)s")
+        params_sql["mois_deces"] = int(params["mois_deces"])
+    
+    if "jour_deces" in params:
+        conditions.append("EXTRACT(DAY FROM date_deces) = %(jour_deces)s")
+        params_sql["jour_deces"] = int(params["jour_deces"])
 
     if conditions:
         final_query = base_query + " WHERE " + " AND ".join(conditions)

@@ -189,7 +189,6 @@ def main():
         conn.close()
         print("Suppression des doublons terminée.")
         
-        print("Suppresion des données impossibles...")
         conn = psycopg2.connect(
             dbname="shinigami_db",
             user="shinigami",
