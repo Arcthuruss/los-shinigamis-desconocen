@@ -5,7 +5,7 @@ def connection_db():
         dbname="shinigami_db",
         user="shinigami",
         password="shinigami_password",
-        host="localhost",
+        host="db",
         port="5432"
     )
 

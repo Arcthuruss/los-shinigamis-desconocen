@@ -1,42 +1,32 @@
-import {useState} from 'react'
-import reactLogo from './assets/react.svg'
 import oguGif from './assets/ogu.gif'
-import viteLogo from '/vite.svg'
 import './App.css'
+import {get_deces_year} from "./data.ts";
+import {useEffect, useState} from "react";
+
 
 function App() {
-    const [count, setCount] = useState(0)
+
+    const [data, setData] = useState<Array<JSON>>([])
+
+    useEffect(() => {
+        get_deces_year(2010)
+            .then((data) => setData(data))
+            .catch((err) => console.log(err))
+
+    })
 
     return (
         <>
-            <header>
-                <div>
-                    <img src={oguGif} alt="oguri logo"/>
-                    <p>Los Shinigamis desconocen</p>
+            <header className="flex items-center justify-around flex-row sticky top-0 border-2">
+                <div className="flex flex-row items-center justify-center">
+                    <img src={oguGif} alt="oguri logo" className="w-1/8"/>
+                    <h1>Los Shinigamis desconocen</h1>
                 </div>
-                <p>Graphes</p>
-                <p>Prédictions</p>
+                <button>Graphes</button>
+                <button>Prédictions</button>
             </header>
-            <div>
-                <a href="https://vite.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo"/>
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo"/>
-                </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                </button>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
+            <main>
+            </main>
         </>
     )
 }

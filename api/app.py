@@ -1,6 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, Response
+from flask_cors import CORS
 from postgres import *
 app = Flask(__name__)
+cors = CORS(app)
 
 @app.route('/')
 def hello():

@@ -2,7 +2,7 @@
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:18
     container_name: los-shinigamis-db
     command: postgres -c datestyle='iso, dmy'
     environment:
@@ -10,10 +10,10 @@ services:
       POSTGRES_PASSWORD: shinigami_password
       POSTGRES_DB: shinigami_db
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./pgdata:/var/lib/postgresql
       - ./bdd.sql:/docker-entrypoint-initdb.d/bdd.sql
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     networks:
       - backend
 
@@ -29,8 +29,21 @@ services:
       - "8000:8000"
     networks:
       - backend
+      - frontend
+
+  dashboard:
+    build:
+      context: dashboard
+    volumes:
+      - ./dashboard:/app
+      - ./dashboard/node_modules:/app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - frontend
 
 
 
 networks:
   backend:
+  frontend:
