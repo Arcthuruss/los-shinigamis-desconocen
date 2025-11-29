@@ -8,3 +8,12 @@ def connection_db():
         host="localhost",
         port="5432"
     )
+
+def run_sql(query, params=None):
+    conn = connection_db()
+    cur = conn.cursor()
+    cur.execute(query, params)
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return rows
