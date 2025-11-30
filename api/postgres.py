@@ -1,4 +1,5 @@
 import psycopg2
+import psycopg2.extras
 
 def connection_db():
     return psycopg2.connect(
@@ -11,7 +12,7 @@ def connection_db():
 
 def run_sql(query, params=None):
     conn = connection_db()
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cur.execute(query, params)
     rows = cur.fetchall()
     cur.close()

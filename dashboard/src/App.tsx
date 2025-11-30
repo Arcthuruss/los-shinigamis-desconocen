@@ -1,19 +1,24 @@
 import oguGif from './assets/ogu.gif'
 import './App.css'
-import {get_deces_year} from "./data.ts";
-import {useEffect, useState} from "react";
-
+import {useState} from "react";
+import "./Graph.tsx"
+import Graph from "./Graph.tsx";
+import Prediction from "./Prediction.tsx";
 
 function App() {
 
-    const [data, setData] = useState<Array<JSON>>([])
+    const [currentScreen, setCurrentScreen] = useState<"graph" | "prediction">("graph");
 
-    useEffect(() => {
-        get_deces_year(2010)
-            .then((data) => setData(data))
-            .catch((err) => console.log(err))
+    let mainScreen;
 
-    })
+    switch (currentScreen) {
+        case "graph":
+            mainScreen = Graph();
+            break;
+        case "prediction":
+            mainScreen = Prediction();
+            break;
+    }
 
     return (
         <>
@@ -22,11 +27,14 @@ function App() {
                     <img src={oguGif} alt="oguri logo" className="w-1/8"/>
                     <h1>Los Shinigamis desconocen</h1>
                 </div>
-                <button>Graphes</button>
-                <button>Prédictions</button>
+                <button onClick={() => setCurrentScreen("graph")}>
+                    Graphes
+                </button>
+                <button onClick={() => setCurrentScreen("prediction")}>
+                    Prédictions
+                </button>
             </header>
-            <main>
-            </main>
+            {mainScreen}
         </>
     )
 }

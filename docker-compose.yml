@@ -12,8 +12,8 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql
       - ./bdd.sql:/docker-entrypoint-initdb.d/bdd.sql
-    # ports:
-    #   - "5432:5432"
+    ports:
+      - "5432:5432"
     networks:
       - backend
 

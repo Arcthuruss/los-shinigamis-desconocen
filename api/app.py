@@ -1,8 +1,7 @@
-from flask import Flask, request, Response
-from flask_cors import CORS
+from flask import Flask, request, Response, jsonify
+# from flask_cors import CORS
 from postgres import *
 app = Flask(__name__)
-cors = CORS(app)
 
 @app.route('/')
 def hello():
@@ -121,7 +120,41 @@ def get_deces():
 
     rows = run_sql(final_query, params_sql)
 
-    return {"deces": rows}
+    response = jsonify(rows)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/deces_par_mois/<annee>')
+def deces_par_mois(annee) :
+    params_sql = {}
+
+    if annee == "all" :
+        final_query = "select extract(year from date_deces) as key, count(*) as data from le_deces.deces where extract(year from date_deces) >= 1970 group by extract(year from date_deces);"
+    else :
+        final_query = "select extract(month from date_deces) as key, count(*) as data from le_deces.deces where extract(year from date_deces) = %(annee_deces)s group by extract(month from date_deces);"
+        params_sql["annee_deces"] = annee
+
+    rows = run_sql(final_query, params_sql)
+
+    response = jsonify(rows)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/deces_par_annee/<mois>')
+def get_year(mois) :
+    params_sql = {}
+
+    if mois != "all" :
+        final_query = "select extract(year from date_deces) as key, count(*) as data from le_deces.deces where extract(month from date_deces) = %(mois_deces)s and extract(year from date_deces) >= 1970 group by extract(year from date_deces);"
+        params_sql["mois_deces"] = mois
+    else :
+        final_query = "select extract(month from date_deces) as key, count(*) as data from le_deces.deces group by extract(month from date_deces);"
+
+    rows = run_sql(final_query, params_sql)
+
+    response = jsonify(rows)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)

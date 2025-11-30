@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@tailwind utilities;
 
 #root {
   margin: 0 auto;
@@ -8,4 +9,8 @@
 header {
     width: 100vw;
     margin: 0;
+}
+
+main > div {
+    @apply flex flex-col justify-center gap-8
 }
