@@ -6,6 +6,7 @@ import useSound from "use-sound";
 import DoTFD from "./assets/DoTFD.ogg"
 import finalHours from "./assets/FinalHours.mp3"
 import Countdown from "react-countdown";
+import Select from "react-select";
 
 export default function Prediction() {
     const [name, setName] = useState<string>("");
@@ -13,6 +14,7 @@ export default function Prediction() {
     const [dob, setDob] = useState<string>("");
     const [expectancy, setExpectancy] = useState<number | undefined>(undefined);
     const [deathDate, setDeathDate] = useState<Date | undefined>(undefined);
+    const [type_pred, setTypePred] = useState<string>("name or surname");
 
     const [result, setResult] = useState<boolean | null>(null);
 
@@ -23,7 +25,24 @@ export default function Prediction() {
         <>
             <main className="grid grid-cols-2 justify-around gap-4 pt-[4vh]">
                 <div>
-                    <p>Age expectancy prediction</p>
+                    <p>Choice of prediction</p>
+                    <Select
+                        className="bg-white border border-black rounded p-2 w-full text-black"
+                        required
+                        options={[
+                            { value: 'name or surname', label: 'Name or Surname' },
+                            { value: 'name and surname', label: 'Name and Surname' },
+                            { value: 'surname only', label: 'Surname Only' },
+                            { value: 'name only', label: 'Name Only' },
+                        ]}
+                        onChange={(selectedOption) => {
+                            if (selectedOption) {
+                                setTypePred(selectedOption.value);
+                            }
+                        }}
+                        defaultValue={{ value: 'name or surname', label: 'Name or Surname' }}
+                    />
+
                     <p className="text-left">Name</p>
                     <input type="text" name="name" className="bg-white border border-black rounded p-2 w-full text-black"
                     onBlur={(e) => setName(e.target.value)}
@@ -43,7 +62,7 @@ export default function Prediction() {
                             stopDoTFD()
                             stopFinalHours()
                             // Appeler la fonction de prédiction avec les valeurs actuelles de name et surname
-                            get_prediction(name, surname)
+                            get_prediction(name, surname, type_pred)
                                 .then(
                                     (avg_expectancy) => {
                                         // Set la data

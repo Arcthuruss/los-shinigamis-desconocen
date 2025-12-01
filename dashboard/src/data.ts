@@ -46,31 +46,66 @@ async function get_deces_per_year(month: number | "all") {
     }
 }
 
-async function get_prediction(nom: string, prenom: string) {
+async function get_prediction(nom: string, prenom: string, type_pred: string) {
+    let avg_expectancy: number;
 
-    const params = new URLSearchParams();
-    params.append("nom", nom);
-    params.append("avg_age_deces", "true");
+    try {
+        if (type_pred === "name or surname") {
+            const params = new URLSearchParams();
+            params.append("nom", nom);
+            params.append("avg_age_deces", "true");
 
-    const response = await fetch(url + `?${params}`);
+            const response = await fetch(url + `?${params}`);
+            if (!response.ok) throw new Error("Failed to fetch average for nom");
+            const data = await response.json() as {avg: string}[];
 
-    const data = await response.json() as {avg: string}[];
+            const params2 = new URLSearchParams();
+            params2.append("prenom", prenom);
+            params2.append("avg_age_deces", "true");
 
-    const params2 = new URLSearchParams();
-    params2.append("prenom", prenom);
-    params2.append("avg_age_deces", "true");
+            const response2 = await fetch(url + `?${params2}`);
+            if (!response2.ok) throw new Error("Failed to fetch average for prenom");
+            const data2 = await response2.json() as {avg: string}[];
 
-    const response2 = await fetch(url + `?${params2}`);
+            avg_expectancy = (parseFloat(data[0].avg) + parseFloat(data2[0].avg)) / 2;
+        } else if (type_pred === "name and surname") {
+            const params = new URLSearchParams();
+            params.append("nom", nom);
+            params.append("prenom", prenom);
+            params.append("avg_age_deces", "true");
 
-    const data2 = await response2.json() as {avg: string}[];
+            const response = await fetch(url + `?${params}`);
+            if (!response.ok) throw new Error("Failed to fetch average for nom+prenom");
+            const data = await response.json() as {avg: string}[];
 
-    const avg_expectancy = (parseFloat(data[0].avg) + parseFloat(data2[0].avg)) / 2;
+            avg_expectancy = parseFloat(data[0].avg);
+        } else if (type_pred === "surname only") {
+            const params = new URLSearchParams();
+            params.append("nom", nom);
+            params.append("avg_age_deces", "true");
 
-    if (response.ok) {
+            const response = await fetch(url + `?${params}`);
+            if (!response.ok) throw new Error("Failed to fetch average for nom");
+            const data = await response.json() as {avg: string}[];
+
+            avg_expectancy = parseFloat(data[0].avg);
+        } else if (type_pred === "name only") {
+            const params = new URLSearchParams();
+            params.append("prenom", prenom);
+            params.append("avg_age_deces", "true");
+
+            const response = await fetch(url + `?${params}`);
+            if (!response.ok) throw new Error("Failed to fetch average for prenom");
+            const data = await response.json() as {avg: string}[];
+
+            avg_expectancy = parseFloat(data[0].avg);
+        } else {
+            throw new Error("Invalid prediction type");
+        }
+
         return avg_expectancy;
-    } else {
-        const error = new Error("no worky");
-        return Promise.reject(error);
+    } catch (err) {
+        return Promise.reject(err instanceof Error ? err : new Error(String(err)));
     }
 }
 
