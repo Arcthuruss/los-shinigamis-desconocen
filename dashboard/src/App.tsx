@@ -1,9 +1,8 @@
 import oguGif from './assets/ogu.gif'
 import './App.css'
 import {useState} from "react";
-import "./Graph.tsx"
-import Graph from "./Graph.tsx";
-import Prediction from "./Prediction.tsx";
+import Graph from "./Graph";
+import Prediction from "./Prediction";
 
 function App() {
 
@@ -13,10 +12,10 @@ function App() {
 
     switch (currentScreen) {
         case "graph":
-            mainScreen = Graph();
+            mainScreen = <Graph />;
             break;
         case "prediction":
-            mainScreen = Prediction();
+            mainScreen = <Prediction />;
             break;
     }
 
