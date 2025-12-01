@@ -46,6 +46,34 @@ async function get_deces_per_year(month: number | "all") {
     }
 }
 
+async function get_prediction(nom: string, prenom: string) {
+
+    const params = new URLSearchParams();
+    params.append("nom", nom);
+    params.append("avg_age_deces", "true");
+
+    const response = await fetch(url + `?${params}`);
+
+    const data = await response.json() as {avg: string}[];
+
+    const params2 = new URLSearchParams();
+    params2.append("prenom", prenom);
+    params2.append("avg_age_deces", "true");
+
+    const response2 = await fetch(url + `?${params2}`);
+
+    const data2 = await response2.json() as {avg: string}[];
+
+    data.avg_expectancy = (parseFloat(data[0].avg) + parseFloat(data2[0].avg)) / 2;
+
+    if (response.ok) {
+        return data;
+    } else {
+        const error = new Error("no worky");
+        return Promise.reject(error);
+    }
+}
 
 
-export { get_deces_year, get_deces_per_month, get_deces_per_year };
+
+export { get_deces_year, get_deces_per_month, get_deces_per_year, get_prediction};

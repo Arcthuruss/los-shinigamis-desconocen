@@ -41,6 +41,7 @@ def get_deces():
     if "sexe" in params:
         conditions.append("sexe = %(sexe)s")
         params_sql["sexe"] = params["sexe"]
+
     if "age_deces" in params:
         conditions.append("age_deces = %(age_deces)s")
         params_sql["age_deces"] = int(params["age_deces"])
@@ -94,12 +95,12 @@ def get_deces():
         params_sql["lieu_d"] = f"%{params['lieu_deces'].lower()}%"
     
     if "nom" in params:
-        conditions.append("LOWER(nom) LIKE %(nom)s")
-        params_sql["nom"] = f"%{params['nom'].lower()}%"
+        conditions.append("LOWER(nom) = %(nom)s")
+        params_sql["nom"] = params["nom"].lower()
         
     if "prenom" in params:
-        conditions.append("LOWER(prenom) LIKE %(prenom)s")
-        params_sql["prenom"] = f"%{params['prenom'].lower()}%"
+        conditions.append("LOWER(prenom) = %(prenom)s")
+        params_sql["prenom"] = params["prenom"].lower()
     
     if "annee_deces" in params:
         conditions.append("EXTRACT(YEAR FROM date_deces) = %(annee_deces)s")
@@ -112,6 +113,11 @@ def get_deces():
     if "jour_deces" in params:
         conditions.append("EXTRACT(DAY FROM date_deces) = %(jour_deces)s")
         params_sql["jour_deces"] = int(params["jour_deces"])
+        
+    if "avg_age_deces" in params:
+        conditions.append("age_deces IS NOT NULL")
+        select_clause = "AVG(age_deces)"
+        base_query = f"SELECT {select_clause} FROM le_deces.deces"
 
     if conditions:
         final_query = base_query + " WHERE " + " AND ".join(conditions)
