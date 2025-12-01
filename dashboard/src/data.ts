@@ -64,10 +64,10 @@ async function get_prediction(nom: string, prenom: string) {
 
     const data2 = await response2.json() as {avg: string}[];
 
-    data.avg_expectancy = (parseFloat(data[0].avg) + parseFloat(data2[0].avg)) / 2;
+    const avg_expectancy = (parseFloat(data[0].avg) + parseFloat(data2[0].avg)) / 2;
 
     if (response.ok) {
-        return data;
+        return avg_expectancy;
     } else {
         const error = new Error("no worky");
         return Promise.reject(error);

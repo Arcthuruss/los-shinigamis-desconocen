@@ -1,10 +1,23 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
+import { Cardio } from 'ldrs/react';
+import 'ldrs/react/Cardio.css';
 import {get_prediction} from "./data.ts";
+import useSound from "use-sound";
+import DoTFD from "./assets/DoTFD.ogg"
+import finalHours from "./assets/FinalHours.mp3"
+import Countdown from "react-countdown";
 
 export default function Prediction() {
     const [name, setName] = useState<string>("");
     const [surname, setSurname] = useState<string>("");
     const [dob, setDob] = useState<string>("");
+    const [expectancy, setExpectancy] = useState<number | undefined>(undefined);
+    const [deathDate, setDeathDate] = useState<Date | undefined>(undefined);
+
+    const [result, setResult] = useState<boolean | null>(null);
+
+    const [playDoTFD, {stop: stopDoTFD}] = useSound(DoTFD)
+    const [playFinalHours, {stop: stopFinalHours}] = useSound(finalHours)
 
     return (
         <>
@@ -26,18 +39,23 @@ export default function Prediction() {
                     <button
                         className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                         onClick={() => {
+                            setResult(false);
+                            stopDoTFD()
+                            stopFinalHours()
                             // Appeler la fonction de prédiction avec les valeurs actuelles de name et surname
                             get_prediction(name, surname)
                                 .then(
-                                    (data) => {
+                                    (avg_expectancy) => {
                                         // Set la data
-                                        console.log(data);
-                                        const age_expectancy = data.avg_expectancy;
+                                        console.log(avg_expectancy);
+                                        setExpectancy(avg_expectancy);
                                         // Calcul de la date de décès estimée
                                         const birthDate = new Date(dob);
-                                        const deathDate = new Date(birthDate.getFullYear() + age_expectancy, birthDate.getMonth(), birthDate.getDate());
-                                        console.log(`Predicted death date: ${deathDate.toDateString()}`);
-
+                                        setDeathDate(new Date(birthDate.getFullYear() + avg_expectancy, birthDate.getMonth(), birthDate.getDate()));
+                                        console.log(`Predicted death date: ${deathDate?.toDateString()}`);
+                                        setResult(true);
+                                        playDoTFD()
+                                        playFinalHours()
                                     },
                                     (err) => console.log(err)
                                 );
@@ -47,19 +65,33 @@ export default function Prediction() {
                     </button>
                 </div>
 
-                <div>
-                    <p> Result </p>
-                    <div id="result" className="bg-white border border-black rounded p-4 w-full text-black">
+                <div className={result === null?"hidden":"items-center"}>
+                    <h1 className={result?"":"hidden"}>Result</h1>
+                    <div className={result?"hidden":""}>
+                        <Cardio
+                            size="125"
+                            stroke="4"
+                            speed="1"
+                            color="red"
+                        />
+                    </div>
+                    <div id="result" className={result?'border border-white rounded p-4 w-full text-2xl/10':'hidden'}>
                         {/* Animation de turbo stupido ah developer */}
                         <p>Name: {name}</p>
                         <p>Surname: {surname}</p>
                         <p>Date of Birth: {dob}</p>
-                        <p>Predicted Age Expectancy: {}</p>
-                        <p>Death at : {}</p>
-                        { /* Compteur */}
+                        <p>Predicted Age Expectancy: {Math.round(expectancy as number)}</p>
+                        <p>Death at : {deathDate?.toDateString()}</p>
                     </div>
-
                 </div>
+                {result?<Countdown
+                    date={deathDate}
+                    renderer={
+                        ({days, hours, minutes, seconds}) => {
+                            return <h1 className={"col-span-full"}>{days}:{hours}:{minutes}:{seconds}</h1>
+                        }
+                    }
+                />:<></>}
             </main>
         </>
     )

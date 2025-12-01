@@ -11,6 +11,6 @@ header {
     margin: 0;
 }
 
-main > div {
+main > div:not(.hidden) {
     @apply flex flex-col justify-center gap-8
 }

@@ -13,12 +13,14 @@
     "@tailwindcss/vite": "^4.1.17",
     "eslint-plugin-react-dom": "^2.3.7",
     "eslint-plugin-react-x": "^2.3.7",
+    "ldrs": "^1.1.9",
     "react": "^19.2.0",
     "react-countdown": "^2.3.6",
     "react-dom": "^19.2.0",
     "react-select": "^5.10.2",
     "reaviz": "^16.1.0",
-    "tailwindcss": "^4.1.17"
+    "tailwindcss": "^4.1.17",
+    "use-sound": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
